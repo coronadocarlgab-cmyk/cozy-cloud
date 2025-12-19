@@ -69,7 +69,7 @@ export default function LoginPage() {
             <label className="text-sm font-bold text-cozy-text ml-2 uppercase tracking-wide">Email</label>
             <input
               type="email"
-              placeholder="student@tourism.edu"
+              placeholder="Enter Your Email Here!"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-cozy-cream/30 border-2 border-transparent focus:border-cozy-pink focus:bg-white focus:outline-none rounded-2xl p-4 text-cozy-text placeholder:text-gray-300 transition-all duration-300"
