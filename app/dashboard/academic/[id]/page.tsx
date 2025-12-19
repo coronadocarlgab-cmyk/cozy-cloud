@@ -89,14 +89,16 @@ export default function TripDetailsPage() {
           </div>
         </Link>
 
-        {/* Module 2: Budget */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-transparent hover:border-green-200 transition-all cursor-pointer group">
-          <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-400 mb-4 group-hover:scale-110 transition-transform">
-            <DollarSign size={24} />
+       {/* Module 2: Budget (NOW CLICKABLE) */}
+        <Link href={`/dashboard/academic/${id}/budget`}>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-transparent hover:border-green-200 transition-all cursor-pointer group h-full">
+            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-400 mb-4 group-hover:scale-110 transition-transform">
+              <DollarSign size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-cozy-text">Trip Budget</h3>
+            <p className="text-sm text-gray-400">Track expenses</p>
           </div>
-          <h3 className="text-lg font-bold text-cozy-text">Trip Budget</h3>
-          <p className="text-sm text-gray-400">Track expenses</p>
-        </div>
+        </Link>
 
         {/* Module 3: Documents (The File Repository) */}
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-transparent hover:border-cozy-pink transition-all cursor-pointer group">
