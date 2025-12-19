@@ -1,6 +1,7 @@
 'use client'
 
 import { Sparkles, Map, Camera, PenTool } from 'lucide-react'
+import Link from 'next/link'
 
 export default function DashboardHome() {
   return (
@@ -21,19 +22,22 @@ export default function DashboardHome() {
 
       {/* Quick Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Card 1 */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all border-b-4 border-blue-200">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-50 rounded-2xl text-blue-400">
-              <Map size={24} />
+        
+        {/* Card 1: Academic Hub (LINKED) */}
+        <Link href="/dashboard/academic" className="block group">
+          <div className="bg-white p-6 rounded-3xl shadow-sm group-hover:shadow-md transition-all border-b-4 border-blue-200 h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-blue-50 rounded-2xl text-blue-400">
+                <Map size={24} />
+              </div>
+              <span className="text-xs font-bold bg-blue-100 text-blue-500 px-2 py-1 rounded-full">Upcoming</span>
             </div>
-            <span className="text-xs font-bold bg-blue-100 text-blue-500 px-2 py-1 rounded-full">Upcoming</span>
+            <h3 className="text-lg font-bold text-gray-600">Next Trip</h3>
+            <p className="text-sm text-gray-400">Manage your itineraries.</p>
           </div>
-          <h3 className="text-lg font-bold text-gray-600">Next Trip</h3>
-          <p className="text-sm text-gray-400">No trips planned yet.</p>
-        </div>
+        </Link>
 
-        {/* Card 2 */}
+        {/* Card 2: Events (MICE) - Placeholder for now */}
         <div className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all border-b-4 border-green-200">
           <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-green-50 rounded-2xl text-green-400">
@@ -45,19 +49,21 @@ export default function DashboardHome() {
           <p className="text-sm text-gray-400">0 MICE projects active.</p>
         </div>
 
-        {/* Card 3 */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all border-b-4 border-cozy-pink">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-pink-50 rounded-2xl text-cozy-pink">
-              <Camera size={24} />
+        {/* Card 3: Personal Journal (LINKED) */}
+        <Link href="/dashboard/personal" className="block group">
+          <div className="bg-white p-6 rounded-3xl shadow-sm group-hover:shadow-md transition-all border-b-4 border-cozy-pink h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-pink-50 rounded-2xl text-cozy-pink">
+                <Camera size={24} />
+              </div>
+              <span className="text-xs font-bold bg-pink-100 text-cozy-pink px-2 py-1 rounded-full">Journal</span>
             </div>
-            <span className="text-xs font-bold bg-pink-100 text-cozy-pink px-2 py-1 rounded-full">Journal</span>
+            <h3 className="text-lg font-bold text-gray-600">Daily Mood</h3>
+            <p className="text-sm text-gray-400">How are you feeling?</p>
           </div>
-          <h3 className="text-lg font-bold text-gray-600">Daily Mood</h3>
-          <p className="text-sm text-gray-400">How are you feeling?</p>
-        </div>
-      </div>
+        </Link>
 
+      </div>
     </div>
   )
 }
