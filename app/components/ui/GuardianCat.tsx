@@ -8,7 +8,8 @@ export default function GuardianCat() {
 
   return (
     <div 
-      className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-50 cursor-pointer group"
+      // CHANGE: z-50 -> z-30 (So menus can float over it)
+      className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-30 cursor-pointer group"
       onMouseEnter={() => setIsAwake(true)}
       onMouseLeave={() => setIsAwake(false)}
       onClick={() => setIsAwake(!isAwake)}
@@ -24,29 +25,16 @@ export default function GuardianCat() {
         <div className="absolute -bottom-2 right-4 w-3 h-3 bg-white border-b-2 border-r-2 border-pink-400 transform rotate-45" />
       </div>
 
-      {/* Zzz Animation (Only when asleep) */}
+      {/* Zzz Animation */}
       {!isAwake && (
         <div className="absolute -top-10 right-4 flex flex-col items-end pointer-events-none z-20 w-12 h-16">
-          
-          {/* Z #1 */}
-          <span className="absolute bottom-0 right-4 text-pink-300 font-bold text-xs animate-float-sleep" style={{ animationDelay: '0s' }}>
-            z
-          </span>
-          
-          {/* Z #2 */}
-          <span className="absolute bottom-2 right-1 text-pink-400 font-bold text-sm animate-float-sleep" style={{ animationDelay: '1s' }}>
-            z
-          </span>
-
-          {/* Z #3 */}
-          <span className="absolute bottom-6 right-0 text-pink-500 font-bold text-lg animate-float-sleep" style={{ animationDelay: '2s' }}>
-            Z
-          </span>
-
+          <span className="absolute bottom-0 right-4 text-pink-300 font-bold text-xs animate-float-sleep" style={{ animationDelay: '0s' }}>z</span>
+          <span className="absolute bottom-2 right-1 text-pink-400 font-bold text-sm animate-float-sleep" style={{ animationDelay: '1s' }}>z</span>
+          <span className="absolute bottom-6 right-0 text-pink-500 font-bold text-lg animate-float-sleep" style={{ animationDelay: '2s' }}>Z</span>
         </div>
       )}
 
-      {/* THE IMAGE CONTAINER */}
+      {/* IMAGE CONTAINER */}
       <div className={`relative w-24 h-24 transition-transform duration-200 group-hover:-translate-y-2 ${isAwake ? 'animate-bounce-slight' : ''}`}>
         <Image
           src="/guardian-cat.png"

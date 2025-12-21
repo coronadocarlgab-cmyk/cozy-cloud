@@ -5,6 +5,8 @@ import { createClient } from '@/utils/supabase/client'
 import { ArrowLeft, Plus, Trash2, MapPin, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import CozyTimePicker from '@/app/components/ui/CozyTimePicker' // <--- IMMERSION
+import DownloadButton from './DownloadButton' // <--- PDF ENGINE
 
 type Activity = {
   id: string
@@ -21,6 +23,8 @@ export default function ItineraryBuilder() {
   const supabase = createClient()
 
   const [activities, setActivities] = useState<Activity[]>([])
+  const [destinationName, setDestinationName] = useState('Unknown') // <--- New state for PDF title
+  
   const [newActivity, setNewActivity] = useState({
     day_number: 1,
     start_time: '',
@@ -28,7 +32,17 @@ export default function ItineraryBuilder() {
     location: '',
   })
 
-  const fetchActivities = async () => {
+  const fetchData = async () => {
+    // 1. Fetch Itinerary Details (for the title)
+    const { data: itin } = await supabase
+      .from('itineraries')
+      .select('destination')
+      .eq('id', id)
+      .single()
+    
+    if (itin) setDestinationName(itin.destination)
+
+    // 2. Fetch Activities
     const { data } = await supabase
       .from('itinerary_activities')
       .select('*')
@@ -40,13 +54,12 @@ export default function ItineraryBuilder() {
   }
 
   useEffect(() => {
-    fetchActivities()
+    fetchData()
   }, [id])
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validate Time
     if (!newActivity.start_time) {
         alert("Please select a time!")
         return
@@ -66,17 +79,16 @@ export default function ItineraryBuilder() {
     if (error) alert(error.message)
     else {
       setNewActivity({ ...newActivity, activity_name: '', location: '', start_time: '' }) 
-      fetchActivities()
+      fetchData()
     }
   }
 
   const handleDelete = async (activityId: string) => {
     if(!confirm("Remove this activity?")) return
     await supabase.from('itinerary_activities').delete().eq('id', activityId)
-    fetchActivities()
+    fetchData()
   }
 
-  // Group activities by Day
   const groupedActivities = activities.reduce((acc, curr) => {
     const day = curr.day_number
     if (!acc[day]) acc[day] = []
@@ -85,17 +97,22 @@ export default function ItineraryBuilder() {
   }, {} as Record<number, Activity[]>)
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 pb-20">
       
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href={`/dashboard/academic/${id}`} className="p-2 bg-white rounded-full hover:bg-gray-100 transition-colors">
-          <ArrowLeft size={20} className="text-cozy-sage" />
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-cozy-text">Itinerary Planner</h1>
-          <p className="text-cozy-sage text-sm">Drafting the master plan.</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href={`/dashboard/academic/${id}`} className="p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-sm">
+            <ArrowLeft size={20} className="text-cozy-sage" />
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-cozy-text">Itinerary Planner</h1>
+            <p className="text-cozy-sage text-sm">Drafting the master plan for {destinationName}.</p>
+          </div>
         </div>
+
+        {/* PDF Download Button */}
+        <DownloadButton destination={destinationName} activities={activities} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -118,18 +135,12 @@ export default function ItineraryBuilder() {
                 />
               </div>
 
-              {/* --- MANUAL TIME INPUT ONLY --- */}
-              <div>
-                <label className="text-xs font-bold text-gray-400 uppercase">Time</label>
-                <input 
-                    type="time" 
-                    required
-                    className="w-full bg-gray-50 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-200 outline-none text-cozy-text"
-                    value={newActivity.start_time}
-                    onChange={(e) => setNewActivity({...newActivity, start_time: e.target.value})}
-                />
-              </div>
-              {/* ------------------------------ */}
+              {/* COZY TIME PICKER */}
+              <CozyTimePicker 
+                label="Start Time"
+                value={newActivity.start_time}
+                onChange={(val) => setNewActivity({...newActivity, start_time: val})}
+              />
 
               <div>
                 <label className="text-xs font-bold text-gray-400 uppercase">Activity</label>
@@ -151,7 +162,7 @@ export default function ItineraryBuilder() {
                 />
               </div>
 
-              <button type="submit" className="w-full bg-blue-400 text-white font-bold py-3 rounded-xl hover:bg-blue-500 transition-colors shadow-md cursor-pointer">
+              <button type="submit" className="w-full bg-blue-400 text-white font-bold py-3 rounded-xl hover:bg-blue-500 transition-colors shadow-md cursor-pointer btn-tactile">
                 Add to Schedule
               </button>
             </form>
@@ -166,10 +177,10 @@ export default function ItineraryBuilder() {
             </div>
           ) : (
             Object.keys(groupedActivities).map((day: any) => (
-              <div key={day} className="relative">
+              <div key={day} className="relative animate-fade-in">
                 {/* Day Header */}
                 <div className="sticky top-0 z-10 bg-cozy-cream/95 backdrop-blur-sm py-2 mb-4">
-                  <span className="bg-blue-100 text-blue-600 font-bold px-4 py-1 rounded-full text-sm">
+                  <span className="bg-blue-100 text-blue-600 font-bold px-4 py-1 rounded-full text-sm shadow-sm">
                     Day {day}
                   </span>
                 </div>
@@ -177,10 +188,10 @@ export default function ItineraryBuilder() {
                 {/* Activities List */}
                 <div className="space-y-4 border-l-2 border-blue-100 ml-4 pl-6 relative">
                   {groupedActivities[day].map((activity) => (
-                    <div key={activity.id} className="bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-blue-100 group transition-all relative">
+                    <div key={activity.id} className="bg-white p-4 rounded-2xl shadow-sm border border-transparent hover:border-blue-100 group transition-all relative hover:-translate-y-1">
                       
                       {/* Timeline Dot */}
-                      <div className="absolute -left-[31px] top-6 w-4 h-4 rounded-full bg-white border-4 border-blue-200"></div>
+                      <div className="absolute -left-[31px] top-6 w-4 h-4 rounded-full bg-white border-4 border-blue-200 shadow-sm"></div>
 
                       <div className="flex justify-between items-start">
                         <div>

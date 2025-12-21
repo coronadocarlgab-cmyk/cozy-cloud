@@ -3,146 +3,114 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Plane, MapPin, Calendar, ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Plane, Calendar, MapPin } from 'lucide-react'
 import Link from 'next/link'
+import CozyDatePicker from '@/app/components/ui/CozyDatePicker' // <--- NEW IMPORT
 
-export default function NewTripPage() {
-  const supabase = createClient()
-  const router = useRouter()
-  
-  const [loading, setLoading] = useState(false)
+export default function NewTrip() {
   const [formData, setFormData] = useState({
-    title: '',
     destination: '',
     start_date: '',
-    end_date: ''
+    end_date: '',
+    notes: ''
   })
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const supabase = createClient()
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
-    // 1. Get current user
     const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      alert('Please log in first!')
-      setLoading(false)
-      return
+    
+    if (user) {
+      const { error } = await supabase
+        .from('itineraries')
+        .insert([{
+          ...formData,
+          user_id: user.id,
+          status: 'planning'
+        }])
+      
+      if (!error) {
+        router.push('/dashboard/academic')
+      } else {
+        alert('Error creating trip: ' + error.message)
+      }
     }
-
-    // 2. Insert data into 'itineraries' table
-    const { error } = await supabase
-      .from('itineraries')
-      .insert([{
-        user_id: user.id,
-        title: formData.title,
-        destination: formData.destination,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-        status: 'planning'
-      }])
-
-    if (error) {
-      alert('Error creating trip: ' + error.message)
-      setLoading(false)
-    } else {
-      // 3. Success! Redirect back to Academic Hub
-      router.push('/dashboard/academic')
-      router.refresh()
-    }
+    setLoading(false)
   }
 
   return (
     <div className="max-w-2xl mx-auto">
-      
-      {/* Back Button */}
-      <Link 
-        href="/dashboard/academic" 
-        className="inline-flex items-center text-cozy-sage hover:text-cozy-text mb-6 transition-colors"
-      >
-        <ArrowLeft size={20} className="mr-2" /> Back to Hub
+      <Link href="/dashboard/academic" className="inline-flex items-center gap-2 text-gray-400 hover:text-cozy-text mb-6 transition-colors">
+        <ArrowLeft size={20} /> Back to Academic Hub
       </Link>
 
-      <div className="bg-white rounded-3xl shadow-lg border border-cozy-pink/20 overflow-hidden">
-        
-        {/* Header */}
-        <div className="bg-cozy-pink/10 p-8 border-b border-cozy-pink/20">
-          <h1 className="text-2xl font-bold text-cozy-text flex items-center gap-2">
-            <Plane className="text-cozy-pink" /> Plan New Adventure
-          </h1>
-          <p className="text-cozy-sage text-sm mt-1">Where are we going next?</p>
+      <div className="bg-white p-8 rounded-3xl shadow-soft border border-gray-100">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-blue-50 rounded-2xl text-blue-400">
+            <Plane size={24} />
+          </div>
+          <h1 className="text-2xl font-bold text-cozy-text">Plan a New Adventure</h1>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSave} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* Title Input */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Trip Name</label>
-            <input
-              required
-              type="text"
-              placeholder="e.g., Palawan Field Trip 2025"
-              className="w-full bg-cozy-cream/30 border-2 border-transparent focus:border-cozy-pink focus:bg-white rounded-2xl p-4 outline-none transition-all"
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-            />
-          </div>
-
-          {/* Destination Input */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-              <MapPin size={14} /> Destination
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="e.g., El Nido, Palawan"
-              className="w-full bg-cozy-cream/30 border-2 border-transparent focus:border-cozy-pink focus:bg-white rounded-2xl p-4 outline-none transition-all"
-              value={formData.destination}
-              onChange={(e) => setFormData({...formData, destination: e.target.value})}
-            />
-          </div>
-
-          {/* Dates Row */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                <Calendar size={14} /> Start Date
-              </label>
+          {/* Destination */}
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Where to?</label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
               <input
+                type="text"
                 required
-                type="date"
-                className="w-full bg-cozy-cream/30 border-2 border-transparent focus:border-cozy-pink focus:bg-white rounded-2xl p-4 outline-none transition-all text-cozy-text"
-                value={formData.start_date}
-                onChange={(e) => setFormData({...formData, start_date: e.target.value})}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                <Calendar size={14} /> End Date
-              </label>
-              <input
-                required
-                type="date"
-                className="w-full bg-cozy-cream/30 border-2 border-transparent focus:border-cozy-pink focus:bg-white rounded-2xl p-4 outline-none transition-all text-cozy-text"
-                value={formData.end_date}
-                onChange={(e) => setFormData({...formData, end_date: e.target.value})}
+                placeholder="e.g. Paris, France"
+                className="w-full bg-gray-50 rounded-xl py-3 pl-12 pr-4 text-cozy-text focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all"
+                value={formData.destination}
+                onChange={(e) => setFormData({...formData, destination: e.target.value})}
               />
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* DATES GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Start Date */}
+            <CozyDatePicker 
+              label="Start Date"
+              value={formData.start_date}
+              onChange={(val) => setFormData({...formData, start_date: val})}
+            />
+
+            {/* End Date */}
+            <CozyDatePicker 
+              label="End Date"
+              value={formData.end_date}
+              onChange={(val) => setFormData({...formData, end_date: val})}
+            />
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Quick Notes</label>
+            <textarea
+              rows={4}
+              placeholder="Main goals for this trip..."
+              className="w-full bg-gray-50 rounded-xl p-4 text-cozy-text focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none"
+              value={formData.notes}
+              onChange={(e) => setFormData({...formData, notes: e.target.value})}
+            />
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-cozy-text text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-gray-700 hover:shadow-xl transform active:scale-95 transition-all flex justify-center items-center gap-2 mt-4 cursor-pointer"
+            className="w-full bg-cozy-pink text-white font-bold py-4 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating...' : 'Create Itinerary'} <Save size={18} />
+            {loading ? 'Creating...' : 'Start Planning ✈️'}
           </button>
-
         </form>
       </div>
     </div>
