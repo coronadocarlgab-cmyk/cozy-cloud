@@ -11,12 +11,12 @@ const config: Config = {
     extend: {
       colors: {
         cozy: {
-          pink: "#FFD1DC",      // Primary Pink
-          cream: "#FFFDD0",     // Warm Background
-          sage: "#B2AC88",      // Green Accents
-          text: "#5D5D5D",      // Soft Grey Text
-          paper: "#FFFFFF",     // White Cards
-          alert: "#FFE4E1",     // Soft Red/Pink
+          pink: "#FFD1DC",
+          cream: "#FFFDD0",
+          sage: "#B2AC88",
+          text: "#5D5D5D",
+          paper: "#FFFFFF",
+          alert: "#FFE4E1",
         },
       },
       borderRadius: {
@@ -33,6 +33,7 @@ const config: Config = {
         'fade-in': 'fadeIn 0.3s ease-out forwards',
         'pop-up': 'popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
         'float-up': 'floatUp 15s linear infinite',
+        'float-sleep': 'floatSleep 3s ease-out infinite', // <--- NEW: Gentle sleep animation
       },
       keyframes: {
         'bounce-slight': {
@@ -47,12 +48,18 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'scale(0.9) translateY(20px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
         },
-        // --- FIX IS HERE ---
         floatUp: {
-          '0%': { transform: 'translateY(0) scale(0.5)', opacity: '0' }, // Start at bottom
-          '10%': { opacity: '0.6' }, // Fade in
-          '90%': { opacity: '0.6' }, // Stay visible
-          '100%': { transform: 'translateY(-120vh) scale(1)', opacity: '0' }, // Float to TOP (negative Y)
+          '0%': { transform: 'translateY(0) scale(0.5)', opacity: '0' },
+          '10%': { opacity: '0.6' },
+          '90%': { opacity: '0.6' },
+          '100%': { transform: 'translateY(-120vh) scale(1)', opacity: '0' },
+        },
+        // <--- NEW KEYFRAME: Short float & fade
+        floatSleep: {
+          '0%': { transform: 'translateY(0) scale(0.8)', opacity: '0' },
+          '20%': { opacity: '1' }, // Visible quickly
+          '80%': { opacity: '1' }, // Stay visible
+          '100%': { transform: 'translateY(-30px) scale(1.1)', opacity: '0' }, // Float up 30px & fade
         }
       }
     },

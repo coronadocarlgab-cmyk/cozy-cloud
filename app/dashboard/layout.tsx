@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation'
 import { Home, BookOpen, Calendar, Coffee, LogOut, Heart } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import FloatingHearts from '@/app/components/ui/FloatingHearts' // <--- Strict Import Path
+import FloatingHearts from '@/app/components/ui/FloatingHearts' 
+import GuardianCat from '@/app/components/ui/GuardianCat' // <--- NEW IMPORT
 
 export default function DashboardLayout({
   children,
@@ -31,8 +32,9 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-cozy-cream relative">
       
-      {/* 🌸 BACKGROUND ANIMATION (Behind everything) */}
+      {/* 🌸 VISUAL DELIGHTS LAYER */}
       <FloatingHearts />
+      <GuardianCat />
 
       {/* 1. DESKTOP SIDEBAR (Hidden on Mobile) */}
       <aside className="hidden md:flex w-64 bg-white/80 backdrop-blur-md border-r-2 border-cozy-pink/20 flex-col p-6 fixed h-full shadow-soft z-20">
@@ -102,7 +104,6 @@ export default function DashboardLayout({
       </div>
 
       {/* 3. MAIN CONTENT AREA */}
-      {/* Added z-10 relative so content sits ON TOP of the hearts */}
       <main className="flex-1 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto w-full relative z-10">
         {children}
       </main>
