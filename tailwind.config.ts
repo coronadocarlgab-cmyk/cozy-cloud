@@ -16,25 +16,23 @@ const config: Config = {
           sage: "#B2AC88",      // Green Accents
           text: "#5D5D5D",      // Soft Grey Text
           paper: "#FFFFFF",     // White Cards
-          alert: "#FFE4E1",     // Soft Red/Pink for errors
+          alert: "#FFE4E1",     // Soft Red/Pink
         },
       },
       borderRadius: {
-        '3xl': '2rem', // Super rounded corners
-        '4xl': '3rem', // Extra rounded for modal/cards
+        '3xl': '2rem',
+        '4xl': '3rem',
       },
       boxShadow: {
-        // The "Neumorphic" Soft Shadow
         'soft': '8px 8px 16px #d1d0aa, -8px -8px 16px #ffffff',
-        // A deeper shadow for floating elements
         'float': '10px 10px 20px #d1d0aa, -10px -10px 20px #ffffff',
-        // Inner shadow for "pressed" buttons or inputs
         'inner-soft': 'inset 4px 4px 8px #d1d0aa, inset -4px -4px 8px #ffffff',
       },
       animation: {
         'bounce-slight': 'bounce-slight 3s infinite',
         'fade-in': 'fadeIn 0.3s ease-out forwards',
         'pop-up': 'popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+        'float-up': 'floatUp 15s linear infinite',
       },
       keyframes: {
         'bounce-slight': {
@@ -49,6 +47,13 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'scale(0.9) translateY(20px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
         },
+        // --- FIX IS HERE ---
+        floatUp: {
+          '0%': { transform: 'translateY(0) scale(0.5)', opacity: '0' }, // Start at bottom
+          '10%': { opacity: '0.6' }, // Fade in
+          '90%': { opacity: '0.6' }, // Stay visible
+          '100%': { transform: 'translateY(-120vh) scale(1)', opacity: '0' }, // Float to TOP (negative Y)
+        }
       }
     },
   },

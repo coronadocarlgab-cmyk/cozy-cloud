@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Home, BookOpen, Calendar, Coffee, LogOut, Heart } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import FloatingHearts from '@/app/components/ui/FloatingHearts' // <--- Strict Import Path
 
 export default function DashboardLayout({
   children,
@@ -28,10 +29,13 @@ export default function DashboardLayout({
   ]
 
   return (
-    <div className="flex min-h-screen bg-cozy-cream">
+    <div className="flex min-h-screen bg-cozy-cream relative">
       
+      {/* 🌸 BACKGROUND ANIMATION (Behind everything) */}
+      <FloatingHearts />
+
       {/* 1. DESKTOP SIDEBAR (Hidden on Mobile) */}
-      <aside className="hidden md:flex w-64 bg-white border-r-2 border-cozy-pink/20 flex-col p-6 fixed h-full shadow-soft z-20">
+      <aside className="hidden md:flex w-64 bg-white/80 backdrop-blur-md border-r-2 border-cozy-pink/20 flex-col p-6 fixed h-full shadow-soft z-20">
         
         {/* Logo */}
         <div className="flex items-center gap-2 mb-10 px-2">
@@ -73,7 +77,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* 2. MOBILE BOTTOM BAR (Visible only on Mobile) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-cozy-pink/20 p-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-cozy-pink/20 p-4 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <nav className="flex justify-around items-center">
           {navItems.map((item) => {
             const isActive = pathname === item.href
@@ -98,8 +102,8 @@ export default function DashboardLayout({
       </div>
 
       {/* 3. MAIN CONTENT AREA */}
-      {/* Added 'pb-24' so content doesn't hide behind the bottom bar on mobile */}
-      <main className="flex-1 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto w-full">
+      {/* Added z-10 relative so content sits ON TOP of the hearts */}
+      <main className="flex-1 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto w-full relative z-10">
         {children}
       </main>
     </div>
