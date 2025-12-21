@@ -5,4 +5,33 @@
 body {
   background-color: #FFFDD0; /* Cozy Cream */
   color: #5D5D5D;
+  -webkit-tap-highlight-color: transparent; /* Removes blue highlight on mobile tap */
+}
+
+/* --- MOBILE FIRST FIXES --- */
+
+/* 1. Prevent iOS Auto-Zoom on inputs */
+@media screen and (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important; /* iOS requires 16px to prevent zoom */
+  }
+}
+
+/* 2. Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 3. Utility class for "Tactile" buttons (The click feel) */
+.btn-tactile {
+  @apply transition-transform active:scale-95 duration-150 ease-out;
+}
+
+/* 4. Hide Scrollbar but allow scrolling (Clean Look) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
